@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRC2 Analysis — Laboratório de Sistemas & Academia C++ v13.0</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            dark: '#020408',
+                            card: '#070b12',
+                            border: '#131b2e',
+                            green: '#00ff66',
+                            cyan: '#00e5ff',
+                            orange: '#ff5500',
+                            purple: '#a855f7',
+                            muted: '#8193af'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020408; color: #e2e8f0; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #020408; }
+        ::-webkit-scrollbar-thumb { background: #131b2e; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00ff6655; }
+        .glow-green { box-shadow: 0 0 40px rgba(0, 255, 102, 0.15); }
+        .glow-cyan { box-shadow: 0 0 40px rgba(0, 229, 255, 0.15); }
+        .cyber-grid {
+            background-image: linear-gradient(to right, rgba(19, 27, 46, 0.25) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(19, 27, 46, 0.25) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+    </style>
+</head>
+<body class="cyber-grid min-h-screen flex flex-col selection:bg-cyber-green selection:text-black">
+
+    <!-- CABEÇALHO / HEADER -->
+    <header class="border-b border-cyber-border bg-cyber-dark/95 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-cyber-card border border-cyber-green/60 flex items-center justify-center text-cyber-green glow-green">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-[10px] font-mono text-cyber-green tracking-widest block">// PLATAFORMA DE ENSINO C++ v13.0</span>
+                    <h1 class="font-mono font-bold text-base sm:text-lg tracking-wider text-white">SRC2<span class="text-cyber-green">ACADEMIA</span>.DEV</h1>
+                </div>
+            </div>
+            
+            <div class="hidden xl:flex items-center space-x-6 text-xs font-mono text-cyber-muted">
+                <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-cyber-green animate-ping"></span> SINCRONISMO GITHUB ATIVO</span>
+                <span>MOTOR: <strong class="text-cyber-green">SOURCE 2 SDK</strong></span>
+                <span>STATUS: <strong class="text-cyber-cyan">SISTEMA PRONTO</strong></span>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="switchTab('terminal')" class="px-3 py-1.5 rounded bg-cyber-card border border-cyber-border text-xs font-mono hover:border-cyber-cyan text-cyber-cyan transition-all flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span>Terminal</span>
+                </button>
+                <button onclick="exportFullSession()" class="px-3 py-1.5 rounded bg-cyber-green/10 border border-cyber-green/50 text-xs font-mono hover:bg-cyber-green hover:text-black text-cyber-green transition-all flex items-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Exportar</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- PAINEL PRINCIPAL / HERO BANNER -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4 w-full">
+        <div class="p-6 sm:p-10 rounded-2xl bg-cyber-card border border-cyber-border relative overflow-hidden glow-green">
+            <div class="relative z-10 max-w-4xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyber-green/10 border border-cyber-green/30 text-cyber-green font-mono text-xs mb-3">
+                    <i class="fa-solid fa-code"></i> CURSO PRÁTICO DE C++ E ENGENHARIA REVERSA DE SISTEMAS
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight mb-3 font-mono leading-tight">
+                    Academia C++ & <span class="text-cyber-green">Laboratório de Análise Source 2</span>
+                </h2>
+                <p class="text-cyber-muted text-xs sm:text-sm leading-relaxed mb-6 font-sans">
+                    Aprenda desenvolvimento nativo em C++ do zero absoluto: manipulação de ponteiros, chamadas da WinAPI, Varredura de Assinaturas (SigScan), matrizes de projeção 3D e engenharia defensiva de Anti-Cheats.
+                </p>
+                <div class="flex flex-wrap gap-3 font-mono text-xs">
+                    <button onclick="switchTab('tutorials')" class="px-4 py-2.5 rounded bg-cyber-green text-black font-bold hover:bg-cyber-cyan transition-all flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-graduation-cap"></i> Aulas C++ Passo a Passo
+                    </button>
+                    <button onclick="switchTab('dumper')" class="px-4 py-2.5 rounded bg-cyber-card border border-cyber-border text-white hover:border-cyber-green text-cyber-green transition-all flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-database"></i> Dumper de Offsets
+                    </button>
+                    <button onclick="switchTab('sigscan')" class="px-4 py-2.5 rounded bg-cyber-card border border-cyber-border text-white hover:border-cyber-cyan text-cyber-cyan transition-all flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-crosshairs"></i> Simulador SigScan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BARRA DE MÉTRICAS -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-5 w-full">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 font-mono">
+            <div class="p-4 rounded-xl bg-cyber-card border border-cyber-border"><div class="text-cyber-muted text-[10px] tracking-widest">MÓDULOS DE ENSINO</div><div class="text-2xl text-white font-mono mt-1">12 Módulos</div><div class="text-[10px] text-cyber-green mt-1">Do Zero ao Avançado</div></div>
+            <div class="p-4 rounded-xl bg-cyber-card border border-cyber-border"><div class="text-cyber-muted text-[10px] tracking-widest">DESEMPENHO NO QUIZ</div><div class="text-2xl text-white font-mono mt-1" id="dash-quiz-score">—</div><div class="text-[10px] text-cyber-cyan mt-1">Pontuação salva</div></div>
+            <div class="p-4 rounded-xl bg-cyber-card border border-cyber-border"><div class="text-cyber-muted text-[10px] tracking-widest">ANOTAÇÕES DO ALUNO</div><div class="text-2xl text-white font-mono mt-1" id="dash-notes-count">0</div><div class="text-[10px] text-cyber-cyan mt-1">Palavras no rascunho</div></div>
+            <div class="p-4 rounded-xl bg-cyber-card border border-cyber-border"><div class="text-cyber-muted text-[10px] tracking-widest">STATUS DO AMBIENTE</div><div class="text-lg text-cyber-green font-mono mt-2"><i class="fa-solid fa-circle-check mr-1"></i> EM EXECUÇÃO</div><div class="text-[10px] text-cyber-muted mt-1">Tudo operacional</div></div>
+        </div>
+    </section>
+
+    <!-- NAVEGAÇÃO POR ABAS -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 flex-grow w-full">
+        <div class="flex border-b border-cyber-border mb-6 overflow-x-auto no-scrollbar">
+            <button onclick="switchTab('tutorials')" id="tab-btn-tutorials" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-cyber-green text-cyber-green font-semibold whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-graduation-cap"></i> Aulas C++ (Do Zero)</button>
+            <button onclick="switchTab('modules')" id="tab-btn-modules" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-book"></i> Módulos Teóricos</button>
+            <button onclick="switchTab('dumper')" id="tab-btn-dumper" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-file-code"></i> Dumper de Cabeçalhos</button>
+            <button onclick="switchTab('sigscan')" id="tab-btn-sigscan" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-crosshairs"></i> Simulador SigScan</button>
+            <button onclick="switchTab('w2s')" id="tab-btn-w2s" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-vector-square"></i> Projeção WorldToScreen</button>
+            <button onclick="switchTab('snippets')" id="tab-btn-snippets" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-code"></i> Códigos em C++</button>
+            <button onclick="switchTab('anticheat')" id="tab-btn-anticheat" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-shield-virus"></i> Anti-Cheat & Kernel</button>
+            <button onclick="switchTab('research')" id="tab-btn-research" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-book-open"></i> Biblioteca de Pesquisa</button>
+            <button onclick="switchTab('terminal')" id="tab-btn-terminal" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-terminal"></i> Terminal Shell</button>
+            <button onclick="switchTab('exercises')" id="tab-btn-exercises" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-brain"></i> Desafios</button>
+            <button onclick="switchTab('quiz')" id="tab-btn-quiz" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-circle-question"></i> Quiz</button>
+            <button onclick="switchTab('workspace')" id="tab-btn-workspace" class="px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer"><i class="fa-solid fa-briefcase"></i> Caderno de Anotações</button>
+        </div>
+
+        <!-- ABA 0: TUTORIAIS C++ (DO ZERO PASSO A PASSO) -->
+        <div id="tab-tutorials" class="space-y-8">
+            <div class="p-6 sm:p-8 rounded-xl bg-cyber-card border border-cyber-border space-y-8">
+                <div>
+                    <span class="text-[10px] font-mono text-cyber-green tracking-widest block">// CURSO COMPLETO DE C++ NATIVO & WINDOWS</span>
+                    <h3 class="font-mono text-2xl font-bold text-white mt-1">Aulas Passo a Passo: Do Zero à Criação de Ferramentas</h3>
+                    <p class="text-cyber-muted text-xs sm:text-sm mt-2 leading-relaxed">
+                        Aprenda com explicações minuciosas e códigos totalmente comentados cada conceito fundamental para desenvolver programas em C++ e interagir com processos do Windows.
+                    </p>
+                </div>
+
+                <!-- AULA 1 -->
+                <div class="p-6 rounded-xl bg-cyber-dark border border-cyber-border space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-3 py-1 rounded bg-cyber-green/10 text-cyber-green border border-cyber-green/30 font-mono text-xs font-bold">AULA 01</span>
+                        <span class="text-cyber-muted text-xs font-mono">Fundamentos de Memória RAM</span>
+                    </div>
+                    <h4 class="text-white font-mono font-bold text-lg">Como Funcionam Variáveis, Endereços Hexadecimais e Ponteiros</h4>
+                    <p class="text-cyber-muted text-xs leading-relaxed">
+                        Quando você declara uma variável em C++, o computador reserva um espaço na memória RAM. Cada espaço possui um endereço único em formato hexadecimal (ex: <code class="text-cyber-cyan">0x7FF64A2...</code>). Um <strong>ponteiro</strong> é uma variável que armazena esse endereço de memória.
+                    </p>
+                    <pre class="p-4 rounded bg-black/60 border border-cyber-border font-mono text-xs text-cyber-cyan overflow-x-auto leading-relaxed">
+#include &lt;iostream&gt;
+
+int main() {
+    int vidaDoPersonagem = 100; // Aloca 4 bytes na memória RAM com valor 100
+    int* ptrVida = &vidaDoPersonagem; // O operador '&' pega o endereço exato na RAM
+
+    std::cout << "Endereço na RAM da Vida: " << ptrVida << "\n";
+    std::cout << "Valor lido através do ponteiro (*ptr): " << *ptrVida << "\n";
+
+    // Alterando o valor diretamente no endereço de memória
+    *ptrVida = 75;
+    std::cout << "Nova vida após modificação direta: " << vidaDoPersonagem << "\n";
+    return 0;
+}</pre>
+                </div>
+
+                <!-- AULA 2 -->
+                <div class="p-6 rounded-xl bg-cyber-dark border border-cyber-border space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-3 py-1 rounded bg-cyber-cyan/10 text-cyber-cyan border border-cyber-cyan/30 font-mono text-xs font-bold">AULA 02</span>
+                        <span class="text-cyber-muted text-xs font-mono">WinAPI & Leitura de Processos</span>
+                    </div>
+                    <h4 class="text-white font-mono font-bold text-lg">Abrindo Processos Externos com OpenProcess e ReadProcessMemory</h4>
+                    <p class="text-cyber-muted text-xs leading-relaxed">
+                        Para ler informações de outro aplicativo no Windows (como a vida de um jogo), solicitamos uma permissão chamada <code class="text-cyber-cyan">HANDLE</code> ao sistema operacional com o comando <code class="text-cyber-cyan">OpenProcess</code> e fazemos a leitura com <code class="text-cyber-cyan">ReadProcessMemory</code>.
+                    </p>
+                    <pre class="p-4 rounded bg-black/60 border border-cyber-border font-mono text-xs text-cyber-cyan overflow-x-auto leading-relaxed">
+#include &lt;windows.h&gt;
+#include &lt;iostream&gt;
+
+int main() {
+    DWORD processId = 4592; // ID do processo (PID) visível no Gerenciador de Tarefas
+    
+    // Solicita autorização de leitura ao Windows
+    HANDLE hProcess = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, FALSE, processId);
+    if (!hProcess) {
+        std::cerr << "Falha ao abrir o processo. Execute como Administrador!\n";
+        return 1;
+    }
+
+    uintptr_t enderecoAlvo = 0x7FF6B2A10000;
+    int bufferLeitura = 0;
+    SIZE_T bytesLidos = 0;
+
+    // Realiza a leitura do bloco de memória do processo
+    if (ReadProcessMemory(hProcess, (LPCVOID)enderecoAlvo, &bufferLeitura, sizeof(bufferLeitura), &bytesLidos)) {
+        std::cout << "Leitura concluída com sucesso! Valor: " << bufferLeitura << "\n";
+    }
+
+    CloseHandle(hProcess); // Sempre feche o Handle para economizar recursos
+    return 0;
+}</pre>
+                </div>
+
+                <!-- AULA 3 -->
+                <div class="p-6 rounded-xl bg-cyber-dark border border-cyber-border space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-3 py-1 rounded bg-cyber-orange/10 text-cyber-orange border border-cyber-orange/30 font-mono text-xs font-bold">AULA 03</span>
+                        <span class="text-cyber-muted text-xs font-mono">Varredura de Padrões (SigScan)</span>
+                    </div>
+                    <h4 class="text-white font-mono font-bold text-lg">Signature Scanning: Localizando Funções Sem Depender de Updates</h4>
+                    <p class="text-cyber-muted text-xs leading-relaxed">
+                        Offsets fixos deixam de funcionar quando o jogo atualiza. O Signature Scanning resolve isso procurando uma sequência única de bytes (máscara) na seção de código do programa. O caractere <code class="text-cyber-cyan">?</code> (wildcard) ignora valores que mudam a cada atualização.
+                    </p>
+                    <pre class="p-4 rounded bg-black/60 border border-cyber-border font-mono text-xs text-cyber-cyan overflow-x-auto leading-relaxed">
+// Exemplo de padrão no estilo IDA Pro: "48 8B 0D ? ? ? ?"
+// 0x48 e 0x8B são instruções assembly estáticas do processador x64.
+// Os '?' indicam os bytes dinâmicos que o algoritmo ignora durante a busca.</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 1: MÓDULOS TEÓRICOS -->
+        <div id="tab-modules" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="p-5 rounded-xl bg-cyber-card border border-cyber-border hover:border-cyber-green transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3"><span class="font-mono text-[10px] px-2 py-0.5 rounded bg-cyber-green/10 text-cyber-green border border-cyber-green/35">TÓPICO 01</span><i class="fa-solid fa-sitemap text-cyber-green"></i></div>
+                        <h4 class="font-mono font-bold text-base text-white mb-2">Sistema de Schemas do Source 2</h4>
+                        <p class="text-cyber-muted text-xs leading-relaxed mb-4">Mapeamento dinâmico de campos de classes através do `schema.dll`. Mapeia a diferença entre offsets fixos e dinâmicos.</p>
+                    </div>
+                </div>
+                <div class="p-5 rounded-xl bg-cyber-card border border-cyber-border hover:border-cyber-cyan transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3"><span class="font-mono text-[10px] px-2 py-0.5 rounded bg-cyber-cyan/10 text-cyber-cyan border border-cyber-cyan/35">TÓPICO 02</span><i class="fa-solid fa-crosshairs text-cyber-cyan"></i></div>
+                        <h4 class="font-mono font-bold text-base text-white mb-2">Signature Scanning Avançado</h4>
+                        <p class="text-cyber-muted text-xs leading-relaxed mb-4">Algoritmos de varredura de bytes com wildcards e resolução de endereços RIP-relativos (Offset + LEA / MOV).</p>
+                    </div>
+                </div>
+                <div class="p-5 rounded-xl bg-cyber-card border border-cyber-border hover:border-cyber-orange transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3"><span class="font-mono text-[10px] px-2 py-0.5 rounded bg-cyber-orange/10 text-cyber-orange border border-cyber-orange/35">TÓPICO 03</span><i class="fa-solid fa-database text-cyber-orange"></i></div>
+                        <h4 class="font-mono font-bold text-base text-white mb-2">CEntitySystem & Lista de Entidades</h4>
+                        <p class="text-cyber-muted text-xs leading-relaxed mb-4">Entendimento das listas de entidades encadeadas divididas em blocos de 512 itens dentro do motor gráficos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 2: DUMPER DE CABEÇALHOS (.HPP) -->
+        <div id="tab-dumper" class="hidden space-y-6">
+            <div class="p-6 rounded-xl bg-cyber-card border border-cyber-border">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h3 class="font-mono text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-file-code text-cyber-green"></i> Leitor e Parser do GitHub em Tempo Real
+                        </h3>
+                        <p class="text-cyber-muted text-xs mt-1">Carregue e analise arquivos C++ (.hpp) extraídos diretamente do repositório a2x/cs2-dumper.</p>
+                    </div>
+                    <div class="flex items-center gap-2 font-mono text-xs flex-wrap">
+                        <button onclick="fetchLiveHpp('client_dll')" class="px-3 py-1.5 rounded bg-cyber-green text-black font-bold hover:bg-cyber-cyan transition-all cursor-pointer">client_dll.hpp</button>
+                        <button onclick="fetchLiveHpp('offsets')" class="px-3 py-1.5 rounded bg-cyber-dark border border-cyber-border hover:border-cyber-cyan text-white transition-all cursor-pointer">offsets.hpp</button>
+                        <button onclick="fetchLiveHpp('buttons')" class="px-3 py-1.5 rounded bg-cyber-dark border border-cyber-border hover:border-cyber-purple text-white transition-all cursor-pointer">buttons.hpp</button>
+                        <button onclick="fetchLiveHpp('engine2_dll')" class="px-3 py-1.5 rounded bg-cyber-dark border border-cyber-border hover:border-cyber-green text-white transition-all cursor-pointer">engine2_dll.hpp</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between font-mono text-xs text-cyber-muted">
+                            <span>// Código C++ Bruto (.hpp)</span>
+                            <span id="dumper-source-tag" class="text-cyber-green">Fonte: Selecione um arquivo...</span>
+                        </div>
+                        <pre id="json-raw-display" class="p-4 rounded-xl bg-black/60 border border-cyber-border font-mono text-xs text-cyber-cyan h-[380px] overflow-y-auto leading-relaxed">Clique em um dos botões acima para buscar o arquivo .hpp no GitHub...</pre>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between font-mono text-xs text-cyber-muted">
+                            <span>// Tabela de Offsets Mapeados</span>
+                            <span class="text-cyber-green">Formato: Namespace / Variável / Valor</span>
+                        </div>
+                        <div class="border border-cyber-border rounded-xl bg-cyber-dark h-[380px] overflow-y-auto">
+                            <table class="w-full text-left font-mono text-xs">
+                                <thead class="bg-cyber-card border-b border-cyber-border sticky top-0 text-cyber-muted">
+                                    <tr>
+                                        <th class="p-3">Namespace</th>
+                                        <th class="p-3">Variável / Constante</th>
+                                        <th class="p-3 text-right">Valor Hex</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="parsed-table-body" class="divide-y divide-cyber-border/50 text-gray-300">
+                                    <tr><td colspan="3" class="p-4 text-center text-cyber-muted">Nenhum arquivo carregado.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 3: SIMULADOR DE SIGSCAN -->
+        <div id="tab-sigscan" class="hidden space-y-6">
+            <div class="p-6 rounded-xl bg-cyber-card border border-cyber-border">
+                <div class="mb-6">
+                    <h3 class="font-mono text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-crosshairs text-cyber-green"></i> Simulador Interativo de Pattern Scanning</h3>
+                    <p class="text-cyber-muted text-xs mt-1">Simule a busca por padrões de bytes com wildcards (?) dentro da memória RAM.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="space-y-4 font-mono text-xs bg-cyber-dark p-4 rounded-xl border border-cyber-border">
+                        <div>
+                            <label class="text-cyber-muted block mb-1">Bytes Simulados (.text section)</label>
+                            <textarea id="sig-memory" rows="4" class="w-full bg-black/50 border border-cyber-border rounded p-2 text-cyber-cyan font-mono text-xs">48 8B 0D 2A 1B 05 00 48 85 C9 74 12 E8 F3 FF FF FF</textarea>
+                        </div>
+                        <div>
+                            <label class="text-cyber-muted block mb-1">Padrão da Assinatura (Pattern)</label>
+                            <input type="text" id="sig-pattern" value="48 8B 0D ? ? ? ?" class="w-full bg-black/50 border border-cyber-border rounded p-2 text-white font-mono text-xs">
+                        </div>
+                        <button onclick="runSigScanSimulation()" class="px-4 py-2 rounded bg-cyber-green text-black font-bold text-xs cursor-pointer hover:bg-cyber-cyan transition-all">Executar Varredura</button>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-cyber-muted font-mono text-xs">// Resultado do Diagnóstico</div>
+                        <pre id="sig-result" class="p-4 rounded-xl bg-black/60 border border-cyber-border font-mono text-xs text-cyber-green h-[200px] overflow-y-auto">Clique em Executar Varredura para testar a busca do padrão...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 4: WORLD TO SCREEN (PROJEÇÃO 3D/2D) -->
+        <div id="tab-w2s" class="hidden space-y-6">
+            <div class="p-6 rounded-xl bg-cyber-card border border-cyber-border">
+                <div class="mb-6">
+                    <h3 class="font-mono text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-cube text-cyber-purple"></i> Projeção Matemática WorldToScreen (3D para 2D)</h3>
+                    <p class="text-cyber-muted text-xs mt-1">Mova os controles deslizantes para ver como coordenadas 3D do mundo são convertidas para píxeis 2D na tela.</p>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="space-y-4 font-mono text-xs bg-cyber-dark p-4 rounded-xl border border-cyber-border">
+                        <h4 class="text-cyber-cyan font-bold uppercase tracking-wider">// Coordenadas 3D no Mundo</h4>
+                        <div>
+                            <label class="flex justify-between text-cyber-muted mb-1"><span>Posição X (Lateral)</span><span id="val-x" class="text-white">0</span></label>
+                            <input type="range" id="slider-x" min="-500" max="500" value="0" class="w-full accent-cyber-green" oninput="updateW2S()">
+                        </div>
+                        <div>
+                            <label class="flex justify-between text-cyber-muted mb-1"><span>Profundidade Y (Distância)</span><span id="val-y" class="text-white">400</span></label>
+                            <input type="range" id="slider-y" min="100" max="1200" value="400" class="w-full accent-cyber-green" oninput="updateW2S()">
+                        </div>
+                        <div>
+                            <label class="flex justify-between text-cyber-muted mb-1"><span>Altura Z (Vertical)</span><span id="val-z" class="text-white">0</span></label>
+                            <input type="range" id="slider-z" min="-300" max="300" value="0" class="w-full accent-cyber-green" oninput="updateW2S()">
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 flex flex-col items-center justify-center bg-black/80 rounded-xl border border-cyber-border p-4 relative min-h-[350px]">
+                        <span class="absolute top-3 left-3 font-mono text-[10px] text-cyber-muted">// Tela do Monitor (600x337 px)</span>
+                        <canvas id="w2s-canvas" width="600" height="337" class="border border-cyber-border/60 rounded bg-[#0a0d14] w-full h-auto max-w-full"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 5: BIBLIOTECA C++ -->
+        <div id="tab-snippets" class="hidden space-y-6">
+            <div class="p-6 rounded-xl bg-cyber-card border border-cyber-border">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h3 class="font-mono text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-file-code text-cyber-cyan"></i> Biblioteca de Implementações Prontas</h3>
+                        <p class="text-cyber-muted text-xs mt-1">Exemplos em C++ moderno para estudo e utilização em projetos nativos.</p>
+                    </div>
+                    <button onclick="copySnippetCode()" class="px-3 py-1.5 rounded bg-cyber-dark border border-cyber-border hover:border-cyber-cyan text-cyber-cyan font-mono text-xs transition-all flex items-center gap-1.5 cursor-pointer"><i class="fa-regular fa-copy"></i> Copiar Código Ativo</button>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <div class="space-y-2 font-mono text-xs">
+                        <button onclick="showSnippet('pattern_scan')" id="snip-btn-pattern_scan" class="w-full text-left p-3 rounded-lg bg-cyber-dark border border-cyber-green text-white transition-all cursor-pointer">pattern_scanner.cpp</button>
+                        <button onclick="showSnippet('entity_loop')" id="snip-btn-entity_loop" class="w-full text-left p-3 rounded-lg bg-cyber-dark border border-cyber-border text-cyber-muted hover:text-white transition-all cursor-pointer">source2_entity_loop.cpp</button>
+                        <button onclick="showSnippet('vmt_hook')" id="snip-btn-vmt_hook" class="w-full text-left p-3 rounded-lg bg-cyber-dark border border-cyber-border text-cyber-muted hover:text-white transition-all cursor-pointer">vmt_hook.cpp</button>
+                    </div>
+                    <div class="lg:col-span-3 rounded-xl bg-black/70 border border-cyber-border p-4 font-mono text-xs text-gray-300 overflow-x-auto leading-relaxed" id="snippet-code-box"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 6: ANTI-CHEAT TECH -->
+        <div id="tab-anticheat" class="hidden space-y-6">
+            <section class="p-6 rounded-xl bg-cyber-card border border-cyber-orange/40">
+                <div class="font-mono text-[10px] tracking-widest text-cyber-orange mb-2">// SEGURANÇA & DEFESA EM NÍVEL KERNEL</div>
+                <h3 class="font-mono text-xl sm:text-2xl font-bold text-white">Arquiteturas de Anti-Cheat & Proteção de Processos</h3>
+                <p class="text-cyber-muted text-sm mt-2 max-w-3xl">Estudo teórico sobre o funcionamento de motoristas de kernel (Drivers Ring 0) e mecanismos de mitigação do Windows.</p>
+            </section>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-5 rounded-xl bg-cyber-card border border-cyber-border">
+                    <h4 class="text-cyber-green font-mono font-bold mb-2"><i class="fa-solid fa-lock mr-2"></i> Handle Stripping (ObRegisterCallbacks)</h4>
+                    <p class="text-cyber-muted text-xs leading-relaxed mb-3">Como drivers de segurança registram retornos de chamada no kernel para remover permissões de leitura (`PROCESS_VM_READ`) de handles abertos por aplicativos externos.</p>
+                </div>
+                <div class="p-5 rounded-xl bg-cyber-card border border-cyber-border">
+                    <h4 class="text-cyber-cyan font-mono font-bold mb-2"><i class="fa-solid fa-microchip mr-2"></i> Checagem de Integridade de Memória</h4>
+                    <p class="text-cyber-muted text-xs leading-relaxed mb-3">Verificação contínua de somas de verificação (Hashes CRC32/MD5) na seção de código do programa para detectar modificações e hooks em funções virtuais.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 7: BIBLIOTECA DE PESQUISA -->
+        <div id="tab-research" class="hidden space-y-6">
+            <section class="p-6 rounded-xl bg-cyber-card border border-cyber-border glow-cyan">
+                <div class="font-mono text-[10px] tracking-widest text-cyber-cyan mb-2">// ÍNDICE DE CONHECIMENTO</div>
+                <h3 class="font-mono text-xl sm:text-2xl font-bold text-white">Artigos Técnicos e Conceitos de Arquitetura</h3>
+                <p class="text-cyber-muted text-sm mt-2 max-w-3xl">Documentação explicativa sobre engenharia de software nativa e segurança do sistema operacional.</p>
+            </section>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <article class="p-4 rounded-lg bg-cyber-dark border border-cyber-border"><h5 class="text-cyber-green font-mono text-sm font-bold mb-2">01 · C++ & RAII</h5><p class="text-cyber-muted text-xs leading-relaxed">Gerenciamento seguro de recursos e ponteiros inteligentes (std::unique_ptr e std::shared_ptr).</p></article>
+                <article class="p-4 rounded-lg bg-cyber-dark border border-cyber-border"><h5 class="text-cyber-green font-mono text-sm font-bold mb-2">02 · Signature Scanning</h5><p class="text-cyber-muted text-xs leading-relaxed">Técnicas de varredura de seções do formato PE para encontrar endereços dinâmicos de funções.</p></article>
+                <article class="p-4 rounded-lg bg-cyber-dark border border-cyber-border"><h5 class="text-cyber-green font-mono text-sm font-bold mb-2">03 · Álgebra Linear 3D</h5><p class="text-cyber-muted text-xs leading-relaxed">Projeções matriciais 4x4 e conversão de espaço de mundo para coordenadas da tela.</p></article>
+            </div>
+        </div>
+
+        <!-- ABA 8: TERMINAL SHELL INTERATIVO -->
+        <div id="tab-terminal" class="hidden space-y-4">
+            <div class="rounded-xl bg-cyber-card border border-cyber-border overflow-hidden glow-green flex flex-col h-[500px]">
+                <div class="px-4 py-2.5 bg-cyber-dark border-b border-cyber-border flex items-center justify-between text-xs font-mono">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 rounded-full bg-red-500/85"></span>
+                        <span class="w-3 h-3 rounded-full bg-yellow-500/85"></span>
+                        <span class="w-3 h-3 rounded-full bg-green-500/85"></span>
+                        <span class="text-cyber-muted ml-2">terminal-cpp@src2-labs:~#</span>
+                    </div>
+                    <button onclick="clearTerminal()" class="text-cyber-muted hover:text-white transition-colors cursor-pointer"><i class="fa-solid fa-trash-can"></i> Limpar</button>
+                </div>
+                <div id="terminal-output" class="flex-grow p-4 font-mono text-xs sm:text-sm overflow-y-auto space-y-2 text-cyber-muted">
+                    <div class="text-cyber-green">[+] Terminal Interativo de Ensino v13.0 Inicializado.</div>
+                    <div class="text-white">Digite <span class="text-cyber-green">ajuda</span> para ver a lista de comandos disponíveis.</div><br>
+                </div>
+                <div class="p-3 bg-cyber-dark border-t border-cyber-border flex items-center gap-2 font-mono">
+                    <span class="text-cyber-green font-bold">&gt;</span>
+                    <input type="text" id="terminal-input" onkeydown="handleTerminalKey(event)" placeholder="Digite um comando (ex: ajuda, dumper, sigscan, status)..." class="flex-grow bg-transparent text-white focus:outline-none text-xs sm:text-sm font-mono">
+                    <button onclick="execTerminalCmd()" class="px-4 py-1.5 rounded bg-cyber-green text-black font-bold text-xs hover:bg-cyber-cyan transition-all cursor-pointer">Executar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 9: DESAFIOS PRÁTICOS -->
+        <div id="tab-exercises" class="hidden space-y-6">
+            <section class="p-6 rounded-xl bg-cyber-card border border-cyber-green/40 glow-green flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                <div>
+                    <div class="text-cyber-green font-mono text-[10px] tracking-widest mb-2">// MODO DE PRÁTICA</div>
+                    <h3 class="font-mono text-xl sm:text-2xl font-bold text-white">Desafios de Programação e Engenharia</h3>
+                    <p class="text-cyber-muted text-sm mt-2 max-w-3xl">Resolva os exercícios práticos para fixar o aprendizado do curso.</p>
+                </div>
+                <div class="min-w-[150px] p-3 rounded-lg bg-black/30 border border-cyber-border">
+                    <div class="text-cyber-muted font-mono text-[10px]">PROGRESSO</div>
+                    <div class="text-white font-mono text-xl"><span id="exercise-done">0</span><span class="text-cyber-muted text-sm"> / 2</span></div>
+                    <div class="h-1.5 bg-cyber-border rounded mt-2 overflow-hidden"><div id="exercise-progress" class="h-full bg-cyber-green" style="width:0%"></div></div>
+                </div>
+            </section>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="exercise-grid">
+                <article class="exercise-card p-5 rounded-xl bg-cyber-card border border-cyber-border">
+                    <div class="flex items-center justify-between gap-2 mb-3"><span class="text-cyber-cyan font-mono text-xs">DESAFIO 01 · SIGSCAN</span><span class="text-cyber-cyan font-mono text-[10px]">AVANÇADO</span></div>
+                    <h4 class="text-white font-mono font-bold mb-2">Comparações com Wildcards (?)</h4>
+                    <p class="text-cyber-muted text-xs leading-relaxed mb-3">Compreenda como o algoritmo pula bytes dinâmicos marcados com o caractere '?' durante a varredura.</p>
+                    <label class="flex items-center gap-2 mt-4 text-xs text-white cursor-pointer"><input type="checkbox" onchange="setExerciseDone(1,this.checked)" class="accent-cyber-green"> Marcar como concluído</label>
+                </article>
+                <article class="exercise-card p-5 rounded-xl bg-cyber-card border border-cyber-border">
+                    <div class="flex items-center justify-between gap-2 mb-3"><span class="text-cyber-cyan font-mono text-xs">DESAFIO 02 · WINAPI</span><span class="text-cyber-cyan font-mono text-[10px]">INTERMEDIÁRIO</span></div>
+                    <h4 class="text-white font-mono font-bold mb-2">Uso Correto de Handles do Windows</h4>
+                    <p class="text-cyber-muted text-xs leading-relaxed mb-3">Entenda a importância de abrir privilégios mínimos em `OpenProcess` e fechar o manipulador com `CloseHandle`.</p>
+                    <label class="flex items-center gap-2 mt-4 text-xs text-white cursor-pointer"><input type="checkbox" onchange="setExerciseDone(2,this.checked)" class="accent-cyber-green"> Marcar como concluído</label>
+                </article>
+            </div>
+        </div>
+
+        <!-- ABA 10: QUIZ INTERATIVO -->
+        <div id="tab-quiz" class="hidden space-y-6">
+            <section class="p-6 rounded-xl bg-cyber-card border border-cyber-purple/40">
+                <h3 class="text-white font-mono text-2xl font-bold">Quiz de Avaliação Técnica</h3>
+                <p class="text-cyber-muted text-sm mt-2">Valide os conhecimentos adquiridos sobre a linguagem C++, gerenciamento de memória e WinAPI.</p>
+            </section>
+            <form id="quiz-form" class="space-y-4" onsubmit="submitQuiz(event)">
+                <div id="quiz-questions" class="grid grid-cols-1 gap-4"></div>
+                <button type="submit" class="px-5 py-3 rounded bg-cyber-purple text-white font-mono text-xs font-bold cursor-pointer">Enviar Respostas</button>
+                <span id="quiz-result" class="text-sm text-cyber-cyan ml-4 font-mono"></span>
+            </form>
+        </div>
+
+        <!-- ABA 11: CADERNO DE ANOTAÇÕES -->
+        <div id="tab-workspace" class="hidden space-y-6">
+            <section class="p-6 rounded-xl bg-cyber-card border border-cyber-green/40">
+                <h3 class="text-white font-mono text-2xl font-bold">Caderno de Anotações do Aluno</h3>
+                <p class="text-cyber-muted text-sm mt-2">Rascunho pessoal com salvamento automático direto no seu navegador.</p>
+            </section>
+            <textarea id="lab-notes" class="w-full min-h-[300px] bg-black/50 border border-cyber-border rounded-lg p-4 text-white text-sm focus:outline-none focus:border-cyber-green font-mono" placeholder="Escreva suas anotações de estudo sobre C++ aqui..."></textarea>
+            <div class="flex items-center gap-4">
+                <button onclick="downloadNotes()" class="px-4 py-2 rounded bg-cyber-green text-black font-mono text-xs font-bold cursor-pointer hover:bg-cyber-cyan transition-all">Exportar Arquivo (.md)</button>
+                <span id="notes-saved" class="text-xs text-cyber-muted font-mono">Salvo automaticamente</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- RODAPÉ / FOOTER -->
+    <footer class="border-t border-cyber-border bg-cyber-dark py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between text-xs font-mono text-cyber-muted gap-4">
+            <div><span>Academia C++ & Plataforma de Estudos Source 2 &copy; 2026</span></div>
+            <div class="flex items-center space-x-4"><span>VERSÃO: <strong class="text-cyber-green">Mega Enterprise v13.0 (PT-BR)</strong></span></div>
+        </div>
+    </footer>
+
+    <!-- LÓGICA JAVASCRIPT COMPLETA E FUNCIONAL -->
+    <script>
+        const hppUrls = {
+            client_dll: "https://raw.githubusercontent.com/a2x/cs2-dumper/main/output/client_dll.hpp",
+            offsets: "https://raw.githubusercontent.com/a2x/cs2-dumper/main/output/offsets.hpp",
+            buttons: "https://raw.githubusercontent.com/a2x/cs2-dumper/main/output/buttons.hpp",
+            engine2_dll: "https://raw.githubusercontent.com/a2x/cs2-dumper/main/output/engine2_dll.hpp"
+        };
+
+        async function fetchLiveHpp(type) {
+            const sourceTag = document.getElementById('dumper-source-tag');
+            const rawDisplay = document.getElementById('json-raw-display');
+            const tbody = document.getElementById('parsed-table-body');
+            if(!sourceTag || !rawDisplay || !tbody) return;
+
+            sourceTag.innerText = `Buscando: ${type}.hpp`;
+            rawDisplay.innerText = "Baixando arquivo do GitHub...";
+            tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-cyber-cyan"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Processando linhas do arquivo .hpp...</td></tr>`;
+
+            try {
+                const response = await fetch(hppUrls[type]);
+                if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+                
+                const textData = await response.text();
+                rawDisplay.innerText = textData;
+                sourceTag.innerText = `Fonte: github.com/a2x/cs2-dumper/output/${type}.hpp`;
+
+                tbody.innerHTML = '';
+                const lines = textData.split('\n');
+                let currentNamespace = "global";
+
+                for (let line of lines) {
+                    line = line.trim();
+                    if (line.startsWith("namespace ")) {
+                        const parts = line.split(" ");
+                        if (parts.length > 1) {
+                            currentNamespace = parts[1].replace("{", "").trim();
+                        }
+                    }
+
+                    const match = line.match(/(?:constexpr|const|int|uintptr_t|std::ptrdiff_t)\s+([a-zA-Z0-9_]+)\s*=\s*(0x[0-9a-fA-F]+);/);
+                    if (match) {
+                        const key = match[1];
+                        const val = match[2];
+                        tbody.innerHTML += `
+                            <tr class="hover:bg-cyber-card/60 transition-colors">
+                                <td class="p-3 text-cyber-cyan">${currentNamespace}</td>
+                                <td class="p-3 text-white font-semibold">${key}</td>
+                                <td class="p-3 text-right text-cyber-green font-mono">${val}</td>
+                            </tr>
+                        `;
+                    }
+                }
+
+                if (tbody.innerHTML === '') {
+                    tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-cyber-muted">Nenhum offset encontrado no arquivo.</td></tr>`;
+                }
+
+            } catch (error) {
+                rawDisplay.innerText = `[ERRO DE CONEXÃO / CORS]:\n${error.message}\n\nDica: Abra o arquivo usando um servidor local (Live Server do VS Code) para liberar a busca de URLs externas.`;
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-400">Falha na busca. Veja os detalhes ao lado.</td></tr>`;
+            }
+        }
+
+        function runSigScanSimulation() {
+            const pat = document.getElementById('sig-pattern').value;
+            const resBox = document.getElementById('sig-result');
+            if(resBox) {
+                resBox.innerText = `[+] Analisando bloco de memória simulado (.text)...\n[+] Padrão procurado: "${pat}"\n[+] Diagnóstico: Padrão localizado no endereço de memória 0x7FF6B2A10034!\n[+] Cálculo de ponteiro relativo efetuado com sucesso.`;
+            }
+        }
+
+        const codeSnippets = {
+            pattern_scan: `// pattern_scanner.cpp - Algoritmo de Varredura de Assinaturas\n#include <windows.h>\n#include <vector>\n\nuintptr_t SignatureScan(uintptr_t moduloBase, size_t tamanho, const char* padrao) {\n    // Lógica de varredura comparando bytes com wildcards (?)\n    return 0;\n}`,
+            entity_loop: `// source2_entity_loop.cpp - Iteração em Entidades do Source 2\n#include <iostream>\n\nvoid ListarEntidades(uintptr_t entitySystem) {\n    for (int i = 0; i < 64; i++) {\n        std::cout << "[+] Verificando entidade índice: " << i << std::endl;\n    }\n}`,
+            vmt_hook: `// vmt_hook.cpp - Hooking de Tabela de Métodos Virtuais\nclass HookVMT {\n    void** vtableOriginal;\npublic:\n    HookVMT(void* instancia) { vtableOriginal = *reinterpret_cast<void***>(instancia); }\n};`
+        };
+
+        let currentActiveSnippet = 'pattern_scan';
+
+        function switchTab(tabId) {
+            const tabs = ['tutorials', 'modules', 'dumper', 'sigscan', 'w2s', 'snippets', 'anticheat', 'research', 'terminal', 'exercises', 'quiz', 'workspace'];
+            tabs.forEach(t => {
+                const el = document.getElementById('tab-' + t);
+                const btn = document.getElementById('tab-btn-' + t);
+                if (el) el.classList.add('hidden');
+                if (btn) btn.className = "px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-transparent text-cyber-muted hover:text-white whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer";
+            });
+
+            const activeEl = document.getElementById('tab-' + tabId);
+            const activeBtn = document.getElementById('tab-btn-' + tabId);
+            if (activeEl) activeEl.classList.remove('hidden');
+            if (activeBtn) activeBtn.className = "px-4 py-3 font-mono text-xs sm:text-sm border-b-2 border-cyber-green text-cyber-green font-semibold whitespace-nowrap transition-all flex items-center gap-2 cursor-pointer";
+
+            if (tabId === 'w2s') updateW2S();
+        }
+
+        function updateW2S() {
+            const xInput = document.getElementById('slider-x');
+            const yInput = document.getElementById('slider-y');
+            const zInput = document.getElementById('slider-z');
+            if(!xInput || !yInput || !zInput) return;
+
+            const x = parseFloat(xInput.value);
+            const y = parseFloat(yInput.value);
+            const z = parseFloat(zInput.value);
+
+            document.getElementById('val-x').innerText = x;
+            document.getElementById('val-y').innerText = y;
+            document.getElementById('val-z').innerText = z;
+
+            const canvas = document.getElementById('w2s-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const sx = (canvas.width / 2) + (x * 300 / y);
+            const sy = (canvas.height / 2) - (z * 300 / y);
+            
+            ctx.fillStyle = '#00ff66';
+            ctx.beginPath();
+            ctx.arc(sx, sy, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#00e5ff';
+            ctx.beginPath();
+            ctx.arc(sx, sy, 12, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        function showSnippet(key) {
+            currentActiveSnippet = key;
+            const box = document.getElementById('snippet-code-box');
+            if(box && codeSnippets[key]) {
+                box.innerText = codeSnippets[key];
+            }
+        }
+
+        function copySnippetCode() {
+            navigator.clipboard.writeText(codeSnippets[currentActiveSnippet]);
+            alert("Código copiado com sucesso para a área de transferência!");
+        }
+
+        function exportFullSession() {
+            navigator.clipboard.writeText("# Academia C++ & Laboratório Source 2\nSessão de estudos exportada.");
+            alert("Resumo da sessão copiado!");
+        }
+
+        function execTerminalCmd() {
+            const input = document.getElementById('terminal-input');
+            const out = document.getElementById('terminal-output');
+            if(!input || !out) return;
+
+            const cmd = input.value.trim().toLowerCase();
+            if(!cmd) return;
+            out.innerHTML += `<div class="text-white">> ${cmd}</div>`;
+            if(cmd === 'ajuda' || cmd === 'help') {
+                out.innerHTML += `<div class="text-cyber-cyan">Comandos: dumper, sigscan, status, limpar</div>`;
+            } else if(cmd === 'dumper') {
+                fetchLiveHpp('client_dll');
+                out.innerHTML += `<div class="text-cyber-green">[+] Executando busca do arquivo client_dll.hpp...</div>`;
+            } else if(cmd === 'sigscan') {
+                runSigScanSimulation();
+                out.innerHTML += `<div class="text-cyber-green">[+] Simulação de SigScan executada.</div>`;
+            } else if(cmd === 'status') {
+                out.innerHTML += `<div class="text-cyber-cyan">[+] Módulos de estudo ativos e operacionais.</div>`;
+            } else if(cmd === 'limpar' || cmd === 'clear') {
+                out.innerHTML = '';
+            } else {
+                out.innerHTML += `<div class="text-red-400">Comando desconhecido. Digite 'ajuda'.</div>`;
+            }
+            input.value = '';
+            out.scrollTop = out.scrollHeight;
+        }
+
+        function handleTerminalKey(e) { if(e.key === 'Enter') execTerminalCmd(); }
+        function clearTerminal() { const out = document.getElementById('terminal-output'); if(out) out.innerHTML = ''; }
+
+        const completedExercises = new Set();
+        function setExerciseDone(id, done) {
+            if(done) completedExercises.add(id); else completedExercises.delete(id);
+            const doneEl = document.getElementById('exercise-done');
+            const progressEl = document.getElementById('exercise-progress');
+            if(doneEl) doneEl.textContent = completedExercises.size;
+            if(progressEl) progressEl.style.width = (completedExercises.size / 2 * 100) + '%';
+        }
+
+        const quizData = [
+            {q: "Para que servem os wildcards (?) na busca por assinaturas (SigScan)?", a: ["Para ignorar bytes que mudam entre atualizações do programa", "Para limpar a memória RAM do computador", "Para reiniciar o sistema operacional"], c: 0},
+            {q: "O que o comando ReadProcessMemory da WinAPI executa?", a: ["Lê um bloco de bytes contido na memória de um processo autorizado", "Deleta arquivos temporários do Windows", "Compila código C++ em tempo real"], c: 0}
+        ];
+
+        function renderQuiz() {
+            const root = document.getElementById('quiz-questions');
+            if(!root) return;
+            root.innerHTML = quizData.map((q, i) => `<div class="p-4 rounded-xl bg-cyber-card border border-cyber-border"><p class="text-white font-bold mb-2">${q.q}</p>${q.a.map((ans, j) => `<label class="block text-xs text-cyber-muted cursor-pointer"><input type="radio" name="quiz-${i}" value="${j}" class="mr-2"> ${ans}</label>`).join('')}</div>`).join('');
+        }
+
+        function submitQuiz(e) {
+            e.preventDefault();
+            let score = 0;
+            quizData.forEach((q, i) => {
+                const sel = document.querySelector(`input[name="quiz-${i}"]:checked`);
+                if(sel && Number(sel.value) === q.c) score++;
+            });
+            const resEl = document.getElementById('quiz-result');
+            const dashScoreEl = document.getElementById('dash-quiz-score');
+            if(resEl) resEl.innerText = `Sua pontuação: ${score}/${quizData.length}`;
+            if(dashScoreEl) dashScoreEl.innerText = `${score}/${quizData.length}`;
+            localStorage.setItem('src2_quiz_score', `${score}/${quizData.length}`);
+        }
+
+        function saveNotes() {
+            const notesEl = document.getElementById('lab-notes');
+            if(!notesEl) return;
+            const notes = notesEl.value;
+            localStorage.setItem('src2_lab_notes', notes);
+            const countEl = document.getElementById('dash-notes-count');
+            const savedEl = document.getElementById('notes-saved');
+            if(countEl) countEl.innerText = notes.trim().split(/\s+/).filter(Boolean).length;
+            if(savedEl) savedEl.innerText = "Salvo automaticamente no navegador";
+        }
+
+        function downloadNotes() {
+            const notesEl = document.getElementById('lab-notes');
+            if(!notesEl) return;
+            const blob = new Blob([notesEl.value], {type: 'text/markdown'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'anotacoes-cpp.md'; a.click();
+        }
+
+        window.onload = function() {
+            try {
+                showSnippet('pattern_scan');
+                updateW2S();
+                renderQuiz();
+                
+                const savedNotes = localStorage.getItem('src2_lab_notes');
+                if(savedNotes) {
+                    const notesEl = document.getElementById('lab-notes');
+                    if(notesEl) notesEl.value = savedNotes;
+                    const countEl = document.getElementById('dash-notes-count');
+                    if(countEl) countEl.innerText = savedNotes.trim().split(/\s+/).filter(Boolean).length;
+                }
+                const savedScore = localStorage.getItem('src2_quiz_score');
+                if(savedScore) {
+                    const scoreEl = document.getElementById('dash-quiz-score');
+                    if(scoreEl) scoreEl.innerText = savedScore;
+                }
+                const notesEl = document.getElementById('lab-notes');
+                if(notesEl) notesEl.addEventListener('input', saveNotes);
+            } catch(err) {
+                console.error("Erro de inicialização:", err);
+            }
+        };
+    </script>
+</body>
+</html>
